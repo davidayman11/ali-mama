@@ -1,0 +1,4 @@
+#Mon Aug 26 22:13:12 EET 2024
+base.0=/Users/david/Documents/GitHub/ali-mama/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
