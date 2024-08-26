@@ -29,7 +29,7 @@ class AliMamaApp extends StatelessWidget {
         return MaterialApp(
           title: 'Ali Mama',
           theme: themeProvider.themeData, // Use ThemeProvider for theming
-          home: SplashScreen(),
+          home: HomeScreen(),
           debugShowCheckedModeBanner: false, // Remove the debug banner
         );
       },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'api_service.dart';
+import 'favorites_service.dart'; // Import the FavoritesService
 
 class ProductDetailsScreen extends StatefulWidget {
   final int productId;
@@ -12,16 +13,28 @@ class ProductDetailsScreen extends StatefulWidget {
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   late Future<Map<String, dynamic>> _productDetails;
-  bool _isFavorite = false; // Track favorite status
+  late Map<String, dynamic> _product;
+  bool _isFavorite = false;
 
   @override
   void initState() {
     super.initState();
     _productDetails = ApiService().fetchProductDetails(widget.productId);
+    _productDetails.then((product) {
+      setState(() {
+        _product = product;
+        _isFavorite = FavoritesService().favorites.any((p) => p['id'] == product['id']);
+      });
+    });
   }
 
   void _toggleFavorite() {
     setState(() {
+      if (_isFavorite) {
+        FavoritesService().removeFavorite(_product['id']);
+      } else {
+        FavoritesService().addFavorite(_product);
+      }
       _isFavorite = !_isFavorite;
     });
   }
