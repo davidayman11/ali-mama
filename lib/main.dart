@@ -1,9 +1,11 @@
-import 'package:ali_mama/home_screen.dart';
-import 'package:ali_mama/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'authentication_screen.dart'; // Import the authentication screen
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(
     MultiProvider(
       providers: [
@@ -24,7 +26,11 @@ class AliMamaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Ali Mama',
-      home: SplashScreen(),
+      theme: ThemeData.light(), // Light theme
+      darkTheme: ThemeData.dark(), // Dark theme
+      themeMode: ThemeMode.system, // Use system theme mode
+      home: AuthenticationScreen(),
+      debugShowCheckedModeBanner: false, // Remove the debug banner
     );
   }
 }

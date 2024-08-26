@@ -1,7 +1,9 @@
-import 'package:ali_mama/product_detail_screen.dart';
+// lib/home_screen.dart
 import 'package:flutter/material.dart';
-import 'account_screen.dart';
+import 'product_detail_screen.dart';
+import 'api_service.dart';
 import 'favorite_screen.dart';
+import 'account_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -52,19 +54,50 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class ProductsList extends StatelessWidget {
+class ProductsList extends StatefulWidget {
+  @override
+  _ProductsListState createState() => _ProductsListState();
+}
+
+class _ProductsListState extends State<ProductsList> {
+  late Future<List<dynamic>> _products;
+
+  @override
+  void initState() {
+    super.initState();
+    _products = ApiService().fetchProducts();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Fetch products and display them here
-    return ListView.builder(
-      itemCount: 10, // Replace with actual product count
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text('Product $index'), // Replace with product name
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ProductDetailScreen()),
+    return FutureBuilder<List<dynamic>>(
+      future: _products,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data == null || snapshot.data!.isEmpty) {
+          return Center(child: Text('No products available'));
+        }
+
+        final products = snapshot.data!;
+
+        return ListView.builder(
+          itemCount: products.length,
+          itemBuilder: (context, index) {
+            final product = products[index];
+
+            return ListTile(
+              title: Text(product['title']),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProductDetailsScreen(productId: product['id']),
+                  ),
+                );
+              },
             );
           },
         );
