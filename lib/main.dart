@@ -1,4 +1,5 @@
 import 'package:ali_mama/home_screen.dart';
+import 'package:ali_mama/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,18 +24,7 @@ class AliMamaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Ali Mama',
-      home: HomeScreen(),
-    );
-  }
-}
-
-class SplashScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('Ali Mama'),
-      ),
+      home: SplashScreen(),
     );
   }
 }
