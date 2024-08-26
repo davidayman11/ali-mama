@@ -61,11 +61,24 @@ class ProductsList extends StatefulWidget {
 
 class _ProductsListState extends State<ProductsList> {
   late Future<List<dynamic>> _products;
+  List<dynamic> _filteredProducts = [];
+  TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    _searchController.addListener(_filterProducts);
     _products = ApiService().fetchProducts();
+  }
+
+  void _filterProducts() {
+    setState(() {
+      _filteredProducts = _filteredProducts.where((product) {
+        final title = product['title'].toLowerCase();
+        final query = _searchController.text.toLowerCase();
+        return title.contains(query);
+      }).toList();
+    });
   }
 
   @override
@@ -82,26 +95,51 @@ class _ProductsListState extends State<ProductsList> {
         }
 
         final products = snapshot.data!;
+        if (_filteredProducts.isEmpty) {
+          _filteredProducts = products;
+        }
 
-        return ListView.builder(
-          itemCount: products.length,
-          itemBuilder: (context, index) {
-            final product = products[index];
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Search',
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _filteredProducts.length,
+                itemBuilder: (context, index) {
+                  final product = _filteredProducts[index];
 
-            return ListTile(
-              title: Text(product['title']),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProductDetailsScreen(productId: product['id']),
-                  ),
-                );
-              },
-            );
-          },
+                  return ListTile(
+                    title: Text(product['title']),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProductDetailsScreen(productId: product['id']),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 }

@@ -1,16 +1,16 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:ali_mama/home_screen.dart';
+import 'package:ali_mama/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'authentication_screen.dart'; // Import the authentication screen
+import 'theme_provider.dart'; // Import the ThemeProvider
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+void main() {
   runApp(
     MultiProvider(
       providers: [
         // Add your providers here
-        ChangeNotifierProvider(create: (_) => DummyNotifier()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider(ThemeData.light())), // Add ThemeProvider
+        ChangeNotifierProvider(create: (_) => DummyNotifier()), // Placeholder
       ],
       child: AliMamaApp(),
     ),
@@ -24,13 +24,15 @@ class DummyNotifier extends ChangeNotifier {
 class AliMamaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Ali Mama',
-      theme: ThemeData.light(), // Light theme
-      darkTheme: ThemeData.dark(), // Dark theme
-      themeMode: ThemeMode.system, // Use system theme mode
-      home: AuthenticationScreen(),
-      debugShowCheckedModeBanner: false, // Remove the debug banner
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          title: 'Ali Mama',
+          theme: themeProvider.themeData, // Use ThemeProvider for theming
+          home: SplashScreen(),
+          debugShowCheckedModeBanner: false, // Remove the debug banner
+        );
+      },
     );
   }
 }
